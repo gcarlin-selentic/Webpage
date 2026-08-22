@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contacto — Selentic Group</title>
+  <meta name="description" content="Converse con Selentic Group sobre tecnología disruptiva de ciberseguridad para su empresa." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container site-header__inner">
+      <a href="index.html" aria-label="Selentic Group — inicio">
+        <img class="wordmark-logo" src="assets/img/logo-white-h.svg" alt="" />
+      </a>
+
+      <nav class="nav">
+        <ul class="nav__links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="quienes-somos.html">Quiénes somos</a></li>
+          <li><a href="partners.html">Partners</a></li>
+          <li><a href="contacto.html" aria-current="page">Contacto</a></li>
+        </ul>
+        <div class="nav__cta">
+          <a class="btn btn--primary" href="mailto:sales@selenticgroup.com"><span>Escribir</span> →</a>
+        </div>
+        <button class="nav__toggle" aria-label="Abrir menú" aria-expanded="false">
+          <svg width="18" height="14" viewBox="0 0 18 14" fill="none"><path d="M0 1h18M0 7h18M0 13h18" stroke="currentColor" stroke-width="1.6"/></svg>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="page-hero">
+      <div class="container">
+        <p class="eyebrow">Contacto</p>
+        <h1>Hablemos de tecnología &amp; beyond</h1>
+        <p class="lede">Cuéntenos qué necesita proteger. Un especialista de Selentic Group se pondrá en contacto para entender su caso y recomendar la tecnología adecuada.</p>
+      </div>
+    </section>
+
+    <section class="section--tight">
+      <div class="container">
+        <div class="contact-grid reveal">
+          <div style="display:flex;flex-direction:column;gap:1px">
+            <a class="contact-card" href="mailto:sales@selenticgroup.com">
+              <span class="mono-tag">Correo</span>
+              <span class="contact-card__value">sales@selenticgroup.com</span>
+            </a>
+            <a class="contact-card" href="tel:+51937508124">
+              <span class="mono-tag">Teléfono / WhatsApp</span>
+              <span class="contact-card__value">+51 937 508 124</span>
+            </a>
+            <div class="contact-card">
+              <span class="mono-tag">Ubicación</span>
+              <span class="contact-card__value">Lima, Perú</span>
+            </div>
+          </div>
+
+          <form class="contact-card" style="gap:1.2rem" action="mailto:sales@selenticgroup.com" method="post" enctype="text/plain">
+            <span class="mono-tag">Escríbanos directamente</span>
+
+            <div style="display:flex;flex-direction:column;gap:1rem">
+              <div style="display:flex;flex-direction:column;gap:.4rem">
+                <label class="mono-tag" for="name" style="color:var(--muted)">Nombre</label>
+                <input id="name" name="name" type="text" required
+                  style="background:var(--ink);border:1px solid var(--line);color:var(--white);padding:.85em 1em;font-family:var(--font-body);font-size:.95rem;border-radius:var(--radius)" />
+              </div>
+              <div style="display:flex;flex-direction:column;gap:.4rem">
+                <label class="mono-tag" for="email" style="color:var(--muted)">Correo</label>
+                <input id="email" name="email" type="email" required
+                  style="background:var(--ink);border:1px solid var(--line);color:var(--white);padding:.85em 1em;font-family:var(--font-body);font-size:.95rem;border-radius:var(--radius)" />
+              </div>
+              <div style="display:flex;flex-direction:column;gap:.4rem">
+                <label class="mono-tag" for="company" style="color:var(--muted)">Empresa</label>
+                <input id="company" name="company" type="text"
+                  style="background:var(--ink);border:1px solid var(--line);color:var(--white);padding:.85em 1em;font-family:var(--font-body);font-size:.95rem;border-radius:var(--radius)" />
+              </div>
+              <div style="display:flex;flex-direction:column;gap:.4rem">
+                <label class="mono-tag" for="message" style="color:var(--muted)">Mensaje</label>
+                <textarea id="message" name="message" rows="4" required
+                  style="background:var(--ink);border:1px solid var(--line);color:var(--white);padding:.85em 1em;font-family:var(--font-body);font-size:.95rem;border-radius:var(--radius);resize:vertical"></textarea>
+              </div>
+            </div>
+
+            <button class="btn btn--primary" type="submit" style="align-self:flex-start">Enviar mensaje →</button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="site-footer__top">
+        <div>
+          <img class="wordmark-logo wordmark-logo--footer" src="assets/img/logo-white-h.svg" alt="Selentic Group" />
+          <p class="mono-tag" style="margin-top:1rem;max-width:32ch;color:var(--muted)">Technology &amp; Beyond — tecnología disruptiva de ciberseguridad.</p>
+        </div>
+        <div class="site-footer__links">
+          <div class="site-footer__col">
+            <h4>Navegación</h4>
+            <ul>
+              <li><a href="index.html">Home</a></li>
+              <li><a href="quienes-somos.html">Quiénes somos</a></li>
+              <li><a href="partners.html">Partners</a></li>
+              <li><a href="contacto.html">Contacto</a></li>
+            </ul>
+          </div>
+          <div class="site-footer__col">
+            <h4>Contacto</h4>
+            <ul>
+              <li><a href="mailto:sales@selenticgroup.com">sales@selenticgroup.com</a></li>
+              <li><a href="tel:+51937508124">+51 937 508 124</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="site-footer__bottom">
+        <span>© <span data-year>2026</span> Selentic Group. Todos los derechos reservados.</span>
+        <span>Lima, Perú</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
