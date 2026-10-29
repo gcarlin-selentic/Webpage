@@ -105,6 +105,16 @@ No forwarding is needed, and the domain stays registered at Squarespace.
 3. **Do not touch MX, SPF/DKIM/DMARC (TXT) records.** Company email keeps working only if those stay as they are.
 4. Vercel issues the SSL certificate automatically once DNS resolves (minutes to a few hours).
 
+## Search engines
+
+- `robots.txt` and `sitemap.xml` are generated (`app/robots.ts`, `app/sitemap.ts`); the sitemap lists both languages with hreflang and the feed's last update.
+- Google: Search Console property for `selenticgroup.com` (DNS verification at Squarespace), sitemap submitted there.
+- Bing and other IndexNow engines (Yandex, Seznam, Naver): the key file is `public/2d9750d10be3832773dc6af17bf5e0ab.txt`. To announce changed URLs:
+
+```bash
+curl -s -X POST https://api.indexnow.org/indexnow -H 'content-type: application/json' -d '{"host":"www.selenticgroup.com","key":"2d9750d10be3832773dc6af17bf5e0ab","keyLocation":"https://www.selenticgroup.com/2d9750d10be3832773dc6af17bf5e0ab.txt","urlList":["https://www.selenticgroup.com/","https://www.selenticgroup.com/es"]}'
+```
+
 ## Analytics (off by default)
 
 Nothing tracks visitors unless you opt in. To enable Plausible: create the site in Plausible, set `NEXT_PUBLIC_PLAUSIBLE_DOMAIN=www.selenticgroup.com` in Vercel and redeploy. The CSP adds `plausible.io` automatically only when that variable is set. Update the footer privacy statement at the same time.
