@@ -5,7 +5,9 @@ import { Footer } from "@/components/Footer";
 import { HackFeed } from "@/components/HackFeed";
 import { Header } from "@/components/Header";
 import { Guidance, QuickCheck } from "@/components/QuickCheck";
+import { RadarPanel } from "@/components/RadarPanel";
 import { RelativeDate } from "@/components/RelativeDate";
+import { Reveal } from "@/components/Reveal";
 import { getFeed } from "@/lib/feed";
 import { DICT, HOME, localized, type Locale } from "@/lib/i18n";
 import { CONTACT_EMAIL, CONTACT_PHONE, EXPOSURE_URL, SITE_NAME, SITE_URL } from "@/lib/site";
@@ -27,7 +29,9 @@ export async function HomePage({ locale }: { locale: Locale }) {
             <p className="eyebrow" lang="en">
               Technology &amp; beyond
             </p>
-            <h1 id="hero-title">{t.hero.title}</h1>
+            <h1 id="hero-title">
+              <span className="accent">{t.hero.titleAccent}</span> {t.hero.titleRest}
+            </h1>
             <p className="hero-sub">{t.hero.sub}</p>
             <div className="hero-actions">
               <ExternalLink className="btn btn-primary" href={EXPOSURE_URL} locale={locale}>
@@ -37,13 +41,16 @@ export async function HomePage({ locale }: { locale: Locale }) {
                 {t.hero.seeIncidents}
               </a>
             </div>
-            {feed && (
+            {feed && !feed.stats && (
               <p className="hero-meta">
                 {t.hero.updated} <RelativeDate iso={feed.updated} locale={locale} />
               </p>
             )}
+            {feed?.stats && <RadarPanel feed={feed} locale={locale} />}
           </div>
         </section>
+
+        {feed?.stats && <Reveal stats={feed.stats} locale={locale} />}
 
         <section id="incidents" className="section" aria-labelledby="incidents-title">
           <div className="container">

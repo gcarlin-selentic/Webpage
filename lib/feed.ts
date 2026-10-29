@@ -1,6 +1,6 @@
 import { cacheLife } from "next/cache";
 import mock from "@/data/mock-hacks.json";
-import { SEVERITIES, type Feed, type FeedResult, type Hack, type Severity } from "./types";
+import { SEVERITIES, type Feed, type FeedResult, type FeedStats, type Hack, type Severity } from "./types";
 
 /**
  * Default upstream: the public radar feed that powers the Daily Hack page on
@@ -74,10 +74,47 @@ export function normalizeFeed(raw: unknown): Feed {
       }))
     : [];
 
+  const updated = str(root.generated) || str(root.updated) || new Date().toISOString();
   return {
     hacks,
-    updated: str(root.generated) || str(root.updated) || new Date().toISOString(),
+    updated,
     sources: sources.filter((s) => s.name && s.url),
+    stats: radarStats(list.filter(isObj).filter((item) => "victim" in item), updated, Number(root.window_days)),
+  };
+}
+
+const DAY_MS = 86_400_000;
+
+/** Seven-day totals for the hero panel, from every radar item rather than the trimmed list. */
+function radarStats(items: Obj[], updated: string, windowDays: number): FeedStats | undefined {
+  const end = toIso(updated);
+  if (!items.length || !end) return undefined;
+  const last = Date.parse(end.slice(0, 10));
+  const daily = Array.from({ length: 7 }, (_, i) => ({
+    day: new Date(last - (6 - i) * DAY_MS).toISOString().slice(0, 10),
+    claims: 0,
+  }));
+  const byDay = new Map(daily.map((d) => [d.day, d]));
+  const countries = new Set<string>();
+  // The upstream already limits the feed to its window, so every breach in it counts.
+  const days = Number.isFinite(windowDays) && windowDays > 0 ? windowDays : 180;
+  let breaches = 0;
+  for (const item of items) {
+    const day = (str(item.day) || str(item.seen)).slice(0, 10);
+    if (str(item.type) === "filtracion") {
+      breaches++;
+      continue;
+    }
+    const bucket = byDay.get(day);
+    if (!bucket) continue;
+    bucket.claims++;
+    if (str(item.country)) countries.add(str(item.country).toUpperCase());
+  }
+  return {
+    daily,
+    claims: daily.reduce((n, d) => n + d.claims, 0),
+    countries: countries.size,
+    breaches: { count: breaches, days },
   };
 }
 
@@ -165,6 +202,7 @@ function fromRadar(item: Obj): Hack | null {
     summary,
     severity,
     severity_estimated: true,
+    kind: isBreach ? "breach" : "ransomware",
     affected_domains: victim.split(/[\s,]+/).filter((t) => DOMAIN_RE.test(t)),
     date_published: date,
     source_url: httpsUrl(item.sourceUrl),
