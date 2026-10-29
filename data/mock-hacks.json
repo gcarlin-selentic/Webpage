@@ -1,0 +1,36 @@
+{
+  "generated": "2026-10-28T17:00:00Z",
+  "sources": [{ "name": "Mock data", "url": "https://www.selenticgroup.com/" }],
+  "items": [
+    {
+      "id": "mock-001",
+      "title": "Example Mail Co.",
+      "summary": "Mock entry: a credential dump attributed to Example Mail Co. lists email addresses and hashed passwords.",
+      "severity": "critical",
+      "affected_domains": ["example.com"],
+      "date_published": "2026-10-28T09:30:00Z",
+      "source_url": "https://www.example.com/incident/001",
+      "tags": ["data breach", "email"]
+    },
+    {
+      "id": "mock-002",
+      "title": "Sample Logistics",
+      "summary": "Mock entry: a ransomware group claims to hold internal files from Sample Logistics. Not independently verified.",
+      "severity": "medium",
+      "affected_domains": ["sample-logistics.example"],
+      "date_published": "2026-10-27T14:00:00Z",
+      "source_url": "https://www.example.com/incident/002",
+      "tags": ["ransomware", "transport"]
+    },
+    {
+      "id": "mock-003",
+      "title": "Demo Health Portal",
+      "summary": "Mock entry: a misconfigured storage bucket exposed newsletter sign-up emails.",
+      "severity": "low",
+      "affected_domains": ["demo-health.example"],
+      "date_published": "2026-10-25T08:00:00Z",
+      "source_url": "https://www.example.com/incident/003",
+      "tags": ["exposure", "healthcare"]
+    }
+  ]
+}
