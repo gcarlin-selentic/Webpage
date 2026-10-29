@@ -97,7 +97,8 @@ export function normalizeFeed(raw: unknown): { feed: Feed; all: Hack[] } {
       }))
     : [];
 
-  const updated = str(root.generated) || str(root.updated) || new Date().toISOString();
+  // Strict ISO 8601: the value ends up in the sitemap XML and in <time> elements.
+  const updated = toIso(root.generated) ?? toIso(root.updated) ?? new Date().toISOString();
   const feed: Feed = {
     hacks,
     updated,
