@@ -118,23 +118,22 @@ function fromHack(item: Obj): Hack | null {
 
 const DOMAIN_RE = /^(?=.{4,253}$)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}$/i;
 
-// radar.json labels sectors in Spanish.
-const SECTORS: Record<string, string> = {
-  manufactura: "Manufacturing",
-  servicios: "Services",
-  tecnologia: "Technology",
-  salud: "Healthcare",
-  transporte: "Transport",
-  finanzas: "Finance",
-  retail: "Retail",
-  gobierno: "Government",
-  hoteleria: "Hospitality",
-  educacion: "Education",
-  energia: "Energy",
-  construccion: "Construction",
-  legal: "Legal",
-  medios: "Media",
-  otros: "",
+// radar.json labels sectors in Spanish, without accents.
+const SECTORS: Record<string, { en: string; es: string }> = {
+  manufactura: { en: "Manufacturing", es: "Manufactura" },
+  servicios: { en: "Services", es: "Servicios" },
+  tecnologia: { en: "Technology", es: "Tecnología" },
+  salud: { en: "Healthcare", es: "Salud" },
+  transporte: { en: "Transport", es: "Transporte" },
+  finanzas: { en: "Finance", es: "Finanzas" },
+  retail: { en: "Retail", es: "Retail" },
+  gobierno: { en: "Government", es: "Gobierno" },
+  hoteleria: { en: "Hospitality", es: "Hotelería" },
+  educacion: { en: "Education", es: "Educación" },
+  energia: { en: "Energy", es: "Energía" },
+  construccion: { en: "Construction", es: "Construcción" },
+  legal: { en: "Legal", es: "Legal" },
+  medios: { en: "Media", es: "Medios" },
 };
 
 function fromRadar(item: Obj): Hack | null {
@@ -145,15 +144,20 @@ function fromRadar(item: Obj): Hack | null {
   const isBreach = str(item.type) === "filtracion";
   const group = str(item.group);
   const source = str(item.source);
-  const sector = SECTORS[str(item.sector)] ?? "";
+  const sector = SECTORS[str(item.sector)];
   const country = str(item.country);
 
   // radar.json has no severity. We estimate it from the incident type and say so in the UI:
   // a verified breach exposes account data (high); a ransomware claim is unverified (medium).
   const severity: Severity = isBreach ? "high" : "medium";
+  const breachSource = source || "Have I Been Pwned";
+  const claimSource = source || "a leak-site tracker";
   const summary = isBreach
-    ? `${source || "Have I Been Pwned"} verified a data breach at ${victim}. If you had an account there, check whether your email was included and change that password.`
-    : `The ransomware group "${group}" claims to have breached ${victim}. The claim is listed on ${source || "a leak-site tracker"} and has not been independently verified.`;
+    ? `${breachSource} verified a data breach at ${victim}. If you had an account there, check whether your email was included and change that password.`
+    : `The ransomware group "${group}" claims to have breached ${victim}. The claim is listed on ${claimSource} and has not been independently verified.`;
+  const summaryEs = isBreach
+    ? `${breachSource} verificó una filtración de datos en ${victim}. Si tenía una cuenta allí, revise si su correo fue incluido y cambie esa contraseña.`
+    : `El grupo de ransomware "${group}" afirma haber vulnerado a ${victim}. El reclamo aparece en ${source || "un rastreador de sitios de filtración"} y no ha sido verificado de forma independiente.`;
 
   return {
     id: str(item.id) || `${victim}-${date}`,
@@ -165,6 +169,12 @@ function fromRadar(item: Obj): Hack | null {
     date_published: date,
     source_url: httpsUrl(item.sourceUrl),
     source_name: source,
-    tags: [isBreach ? "Data breach" : "Ransomware claim", sector, country].filter(Boolean),
+    tags: [isBreach ? "Data breach" : "Ransomware claim", sector?.en, country].filter((t): t is string => !!t),
+    es: {
+      summary: summaryEs,
+      tags: [isBreach ? "Filtración de datos" : "Reclamo de ransomware", sector?.es, country].filter(
+        (t): t is string => !!t,
+      ),
+    },
   };
 }

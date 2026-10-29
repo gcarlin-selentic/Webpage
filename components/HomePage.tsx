@@ -1,43 +1,45 @@
 import { Contact } from "@/components/Contact";
-import { FAQ, Faq } from "@/components/Faq";
-import { Footer } from "@/components/Footer";
 import { ArrowIcon, ExternalLink } from "@/components/ExternalLink";
+import { Faq } from "@/components/Faq";
+import { Footer } from "@/components/Footer";
 import { HackFeed } from "@/components/HackFeed";
 import { Header } from "@/components/Header";
 import { Guidance, QuickCheck } from "@/components/QuickCheck";
 import { RelativeDate } from "@/components/RelativeDate";
 import { getFeed } from "@/lib/feed";
+import { DICT, HOME, localized, type Locale } from "@/lib/i18n";
 import { CONTACT_EMAIL, CONTACT_PHONE, EXPOSURE_URL, SITE_NAME, SITE_URL } from "@/lib/site";
 import type { Feed } from "@/lib/types";
 
-export default async function Home() {
+/** The whole landing page, rendered once per language by app/(en)/page.tsx and app/(es)/es/page.tsx. */
+export async function HomePage({ locale }: { locale: Locale }) {
   // Cached for an hour (see lib/feed.ts), so the page is served as static HTML.
   const result = await getFeed();
   const feed = result.ok ? result.feed : null;
+  const t = DICT[locale];
 
   return (
     <>
-      <Header />
+      <Header locale={locale} />
       <main id="main">
         <section className="hero" aria-labelledby="hero-title">
           <div className="container">
-            <p className="eyebrow">Technology &amp; beyond</p>
-            <h1 id="hero-title">Daily alerts on the latest data breaches and ransomware attacks</h1>
-            <p className="hero-sub">
-              We track hacks and leaks so you can quickly see who was hit and check whether your email was exposed.
-              No sales, just practical guidance.
+            <p className="eyebrow" lang="en">
+              Technology &amp; beyond
             </p>
+            <h1 id="hero-title">{t.hero.title}</h1>
+            <p className="hero-sub">{t.hero.sub}</p>
             <div className="hero-actions">
-              <ExternalLink className="btn btn-primary" href={EXPOSURE_URL}>
-                Check if you&apos;re exposed <ArrowIcon />
+              <ExternalLink className="btn btn-primary" href={EXPOSURE_URL} locale={locale}>
+                {t.checkLong} <ArrowIcon />
               </ExternalLink>
               <a className="btn btn-ghost" href="#incidents">
-                See latest incidents
+                {t.hero.seeIncidents}
               </a>
             </div>
             {feed && (
               <p className="hero-meta">
-                Feed updated <RelativeDate iso={feed.updated} />
+                {t.hero.updated} <RelativeDate iso={feed.updated} locale={locale} />
               </p>
             )}
           </div>
@@ -46,25 +48,26 @@ export default async function Home() {
         <section id="incidents" className="section" aria-labelledby="incidents-title">
           <div className="container">
             <div className="section-head">
-              <h2 id="incidents-title">Latest incidents</h2>
-              <p className="section-note">Newest first. Updated daily.</p>
+              <h2 id="incidents-title">{t.incidents.title}</h2>
+              <p className="section-note">{t.incidents.note}</p>
             </div>
-            <HackFeed initial={feed} />
+            <HackFeed initial={feed} locale={locale} />
           </div>
         </section>
 
-        <QuickCheck />
-        <Guidance />
-        <Faq />
-        <Contact />
+        <QuickCheck locale={locale} />
+        <Guidance locale={locale} />
+        <Faq locale={locale} />
+        <Contact locale={locale} />
       </main>
-      <Footer sources={feed?.sources ?? []} />
-      {feed && <JsonLd feed={feed} />}
+      <Footer sources={feed?.sources ?? []} locale={locale} />
+      {feed && <JsonLd feed={feed} locale={locale} />}
     </>
   );
 }
 
-function JsonLd({ feed }: { feed: Feed }) {
+function JsonLd({ feed, locale }: { feed: Feed; locale: Locale }) {
+  const t = DICT[locale];
   const data = [
     {
       "@context": "https://schema.org",
@@ -77,12 +80,15 @@ function JsonLd({ feed }: { feed: Feed }) {
         contactType: "customer support",
         email: CONTACT_EMAIL,
         telephone: CONTACT_PHONE,
+        availableLanguage: ["English", "Spanish"],
       },
     },
     {
       "@context": "https://schema.org",
       "@type": "FAQPage",
-      mainEntity: FAQ.map(({ q, a }) => ({
+      inLanguage: locale,
+      url: `${SITE_URL}${HOME[locale]}`,
+      mainEntity: t.faq.items.map(({ q, a }) => ({
         "@type": "Question",
         name: q,
         acceptedAnswer: { "@type": "Answer", text: a },
@@ -91,21 +97,24 @@ function JsonLd({ feed }: { feed: Feed }) {
     {
       "@context": "https://schema.org",
       "@type": "ItemList",
-      name: "Latest security incidents",
+      name: t.incidents.listName,
       itemListOrder: "https://schema.org/ItemListOrderDescending",
       numberOfItems: Math.min(10, feed.hacks.length),
-      itemListElement: feed.hacks.slice(0, 10).map((h, i) => ({
-        "@type": "ListItem",
-        position: i + 1,
-        item: {
-          "@type": "CreativeWork",
-          name: h.title,
-          description: h.summary,
-          datePublished: h.date_published,
-          keywords: h.tags.join(", "),
-          ...(h.source_url && { url: h.source_url }),
-        },
-      })),
+      itemListElement: feed.hacks.slice(0, 10).map((h, i) => {
+        const { summary, tags } = localized(h, locale);
+        return {
+          "@type": "ListItem",
+          position: i + 1,
+          item: {
+            "@type": "CreativeWork",
+            name: h.title,
+            description: summary,
+            datePublished: h.date_published,
+            keywords: tags.join(", "),
+            ...(h.source_url && { url: h.source_url }),
+          },
+        };
+      }),
     },
   ];
   return (

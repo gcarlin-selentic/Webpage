@@ -2,7 +2,7 @@
 
 Single-page information site for Selentic Group: the latest data breaches and ransomware claims, plus a prominent link to [Am I Exposed?](https://www.am-i-exposed.com/) so visitors can check their own email. The site sells nothing and requires no sign-up.
 
-Next.js 16 (App Router, Cache Components), TypeScript, plain CSS with brand tokens. No UI libraries, no client-side data fetching on first load.
+English at `/`, Spanish at `/es`. Next.js 16 (App Router, Cache Components), TypeScript, plain CSS with brand tokens. No UI libraries, no client-side data fetching on first load.
 
 ## Roadmap
 
@@ -17,11 +17,10 @@ Next.js 16 (App Router, Cache Components), TypeScript, plain CSS with brand toke
 app/
   api/hacks/route.ts     normalised feed as JSON (used by the "Try again" button)
   fonts/                 DM Sans (brand typeface) subset to Latin WOFF2; Bold TTF for the OG image
+  (en)/                  English root layout, page and social image (served at /)
+  (es)/es/               Spanish page and social image (served at /es); (es)/layout.tsx sets lang="es"
   globals.css            ALL design tokens and styles
   icon.svg               favicon from the stacked brand logo
-  layout.tsx             fonts, metadata, opt-in analytics
-  opengraph-image.tsx    1200x630 social preview, generated at build time
-  page.tsx               landing page + JSON-LD
   robots.ts, sitemap.ts
 components/
   Contact.tsx            email, phone/WhatsApp, location (values in lib/site.ts)
@@ -31,11 +30,15 @@ components/
   HackCard.tsx           one incident card + severity chip
   HackDetail.tsx         native <dialog> with details and source link
   HackFeed.tsx           client island: filters, search, "show more", error/empty states
+  HomePage.tsx           the landing page + JSON-LD, rendered once per language
+  RootDocument.tsx       <html>, fonts, per-language metadata with hreflang, opt-in analytics
   Header.tsx
   QuickCheck.tsx         "check in under a minute" panel + guidance list
   RelativeDate.tsx       absolute date in HTML, relative after hydration
 data/mock-hacks.json     sample feed (HACKS_API_URL=mock)
 lib/
+  i18n.ts                ALL page text in English and Spanish (one dictionary per language)
+  og.tsx                 social image renderer shared by both languages
   feed.ts                fetch, cache (1 h), normalise radar.json or the Hack shape
   site.ts                URLs, contact, labels (TODOs here)
   types.ts               Hack / Feed types
@@ -112,7 +115,7 @@ Nothing tracks visitors unless you opt in. To enable Plausible: create the site 
 | Logos | `public/brand/*.svg` (white horizontal in header/footer, stacked for the favicon and JSON-LD) |
 | Social image | `app/opengraph-image.tsx` (TODO: replace with a designed image if the brand team has one) |
 | Contact email, phone, location, repo link | `lib/site.ts` |
-| FAQ wording | `FAQ` array in `components/Faq.tsx` |
+| Any page text, both languages (FAQ included) | `lib/i18n.ts` |
 
 Severity colours are not in the manual. They are functional and always paired with a text label.
 

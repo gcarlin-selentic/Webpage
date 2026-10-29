@@ -2,14 +2,16 @@
 
 import { useMemo, useState } from "react";
 import { SEVERITIES, type Feed, type Hack, type Severity } from "@/lib/types";
-import { EXPOSURE_URL, SEVERITY_LABEL } from "@/lib/site";
+import { EXPOSURE_URL } from "@/lib/site";
+import { DICT, localized, type Locale } from "@/lib/i18n";
 import { ExternalLink } from "./ExternalLink";
 import { HackCard } from "./HackCard";
 import { HackDetail } from "./HackDetail";
 
 const PAGE = 10;
 
-export function HackFeed({ initial }: { initial: Feed | null }) {
+export function HackFeed({ initial, locale }: { initial: Feed | null; locale: Locale }) {
+  const t = DICT[locale].feed;
   const [feed, setFeed] = useState(initial);
   const [status, setStatus] = useState<"idle" | "loading" | "error">(initial ? "idle" : "error");
   const [severity, setSeverity] = useState<Severity | "all">("all");
@@ -28,9 +30,9 @@ export function HackFeed({ initial }: { initial: Feed | null }) {
         (!q ||
           h.title.toLowerCase().includes(q) ||
           h.affected_domains.some((d) => d.toLowerCase().includes(q)) ||
-          h.tags.some((t) => t.toLowerCase().includes(q))),
+          [...h.tags, ...localized(h, locale).tags].some((tag) => tag.toLowerCase().includes(q))),
     );
-  }, [hacks, severity, query]);
+  }, [hacks, severity, query, locale]);
 
   const shown = filtered.slice(0, visible);
 
@@ -49,9 +51,9 @@ export function HackFeed({ initial }: { initial: Feed | null }) {
   if (!feed) {
     return (
       <div className="banner" role="alert">
-        <span>Couldn&apos;t load the latest alerts. Try refreshing.</span>
+        <span>{t.error}</span>
         <button type="button" className="btn btn-ghost btn-sm" onClick={retry} disabled={status === "loading"}>
-          {status === "loading" ? "Loading…" : "Try again"}
+          {status === "loading" ? t.loading : t.retry}
         </button>
       </div>
     );
@@ -60,8 +62,11 @@ export function HackFeed({ initial }: { initial: Feed | null }) {
   if (hacks.length === 0) {
     return (
       <p className="empty">
-        No recent incidents detected. Check back soon. Meanwhile, you can{" "}
-        <ExternalLink href={EXPOSURE_URL}>check whether your email was exposed</ExternalLink>.
+        {t.empty}{" "}
+        <ExternalLink href={EXPOSURE_URL} locale={locale}>
+          {t.emptyLink}
+        </ExternalLink>
+        .
       </p>
     );
   }
@@ -70,7 +75,7 @@ export function HackFeed({ initial }: { initial: Feed | null }) {
     <>
       <form className="filters" role="search" onSubmit={(e) => e.preventDefault()}>
         <fieldset>
-          <legend className="visually-hidden">Filter by severity</legend>
+          <legend className="visually-hidden">{t.filterLegend}</legend>
           {(["all", ...present] as const).map((s) => (
             <label key={s} className="chip-toggle">
               <input
@@ -83,18 +88,18 @@ export function HackFeed({ initial }: { initial: Feed | null }) {
                   setVisible(PAGE);
                 }}
               />
-              <span>{s === "all" ? "All" : SEVERITY_LABEL[s]}</span>
+              <span>{s === "all" ? t.all : DICT[locale].severity[s]}</span>
             </label>
           ))}
         </fieldset>
         <label className="visually-hidden" htmlFor="hack-search">
-          Search incidents by company, domain or tag
+          {t.searchLabel}
         </label>
         <input
           id="hack-search"
           className="search"
           type="search"
-          placeholder="Search company or domain"
+          placeholder={t.searchPlaceholder}
           autoComplete="off"
           value={query}
           onChange={(e) => {
@@ -105,12 +110,12 @@ export function HackFeed({ initial }: { initial: Feed | null }) {
       </form>
 
       <p className="visually-hidden" aria-live="polite">
-        Showing {shown.length} of {filtered.length} incidents
+        {t.showing(shown.length, filtered.length)}
       </p>
 
       {filtered.length === 0 ? (
         <div className="empty">
-          No incidents match these filters.{" "}
+          {t.noMatch}{" "}
           <button
             type="button"
             className="btn btn-ghost btn-sm"
@@ -119,13 +124,13 @@ export function HackFeed({ initial }: { initial: Feed | null }) {
               setSeverity("all");
             }}
           >
-            Clear filters
+            {t.clear}
           </button>
         </div>
       ) : (
         <ul className="hack-list">
           {shown.map((h) => (
-            <HackCard key={h.id} hack={h} onOpen={setOpen} />
+            <HackCard key={h.id} hack={h} locale={locale} onOpen={setOpen} />
           ))}
         </ul>
       )}
@@ -133,12 +138,12 @@ export function HackFeed({ initial }: { initial: Feed | null }) {
       {filtered.length > visible && (
         <div className="list-footer">
           <button type="button" className="btn btn-ghost" onClick={() => setVisible((v) => v + PAGE)}>
-            Show {Math.min(PAGE, filtered.length - visible)} more
+            {t.showMore(Math.min(PAGE, filtered.length - visible))}
           </button>
         </div>
       )}
 
-      <HackDetail hack={open} onClose={() => setOpen(null)} />
+      <HackDetail hack={open} locale={locale} onClose={() => setOpen(null)} />
     </>
   );
 }

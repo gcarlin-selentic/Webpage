@@ -1,22 +1,24 @@
+import { DICT, type Locale } from "@/lib/i18n";
 import { EXPOSURE_URL } from "@/lib/site";
 import { ArrowIcon, ExternalLink } from "./ExternalLink";
 
-export function QuickCheck() {
+export function QuickCheck({ locale }: { locale: Locale }) {
+  const d = DICT[locale];
   return (
     <section id="check" className="section" aria-labelledby="check-title">
       <div className="container">
         <div className="quick-check">
           <div style={{ display: "grid", gap: "1rem" }}>
-            <h2 id="check-title">Check your email in under a minute</h2>
+            <h2 id="check-title">{d.check.title}</h2>
             <ol>
-              <li>Open Am I Exposed? in a new tab.</li>
-              <li>Enter your personal or work email address. No account needed.</li>
-              <li>See whether it appears in known breaches, then follow the steps below.</li>
+              {d.check.steps.map((step) => (
+                <li key={step}>{step}</li>
+              ))}
             </ol>
-            <p>Am I Exposed? is built by Selentic Group. The basic check is free.</p>
+            <p>{d.check.note}</p>
           </div>
-          <ExternalLink className="btn btn-primary" href={EXPOSURE_URL}>
-            Check if you&apos;re exposed <ArrowIcon />
+          <ExternalLink className="btn btn-primary" href={EXPOSURE_URL} locale={locale}>
+            {d.checkLong} <ArrowIcon />
           </ExternalLink>
         </div>
       </div>
@@ -24,25 +26,18 @@ export function QuickCheck() {
   );
 }
 
-export function Guidance() {
+export function Guidance({ locale }: { locale: Locale }) {
+  const t = DICT[locale].guidance;
   return (
     <section className="section guidance" aria-labelledby="guidance-title">
       <div className="container" style={{ display: "grid", gap: "1rem" }}>
-        <h2 id="guidance-title">If your company shows up in a breach</h2>
+        <h2 id="guidance-title">{t.title}</h2>
         <ul>
-          <li>
-            <strong>Change the password</strong> for that service, and anywhere else you reused it.
-          </li>
-          <li>
-            <strong>Turn on two-step verification</strong> on your email first, since it resets every other account.
-          </li>
-          <li>
-            <strong>Expect targeted phishing.</strong> Leaked emails are used for convincing fake invoices and
-            password-reset messages.
-          </li>
-          <li>
-            <strong>Tell your IT or security team</strong> if a work address is involved, so they can check sign-ins.
-          </li>
+          {t.items.map(([lead, rest]) => (
+            <li key={lead}>
+              <strong>{lead}</strong> {rest}
+            </li>
+          ))}
         </ul>
       </div>
     </section>

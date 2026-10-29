@@ -1,11 +1,16 @@
 import type { AnchorHTMLAttributes } from "react";
+import { DICT, type Locale } from "@/lib/i18n";
 
 /** Every outbound link: new tab, no opener, no referrer, and an announcement for screen readers. */
-export function ExternalLink({ children, ...props }: AnchorHTMLAttributes<HTMLAnchorElement>) {
+export function ExternalLink({
+  children,
+  locale = "en",
+  ...props
+}: AnchorHTMLAttributes<HTMLAnchorElement> & { locale?: Locale }) {
   return (
     <a target="_blank" rel="noopener noreferrer" {...props}>
       {children}
-      <span className="visually-hidden"> (opens in a new tab)</span>
+      <span className="visually-hidden"> {DICT[locale].newTab}</span>
     </a>
   );
 }
