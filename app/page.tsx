@@ -1,3 +1,5 @@
+import { Contact } from "@/components/Contact";
+import { FAQ, Faq } from "@/components/Faq";
 import { Footer } from "@/components/Footer";
 import { ArrowIcon, ExternalLink } from "@/components/ExternalLink";
 import { HackFeed } from "@/components/HackFeed";
@@ -5,7 +7,7 @@ import { Header } from "@/components/Header";
 import { Guidance, QuickCheck } from "@/components/QuickCheck";
 import { RelativeDate } from "@/components/RelativeDate";
 import { getFeed } from "@/lib/feed";
-import { EXPOSURE_URL, SITE_NAME, SITE_URL } from "@/lib/site";
+import { CONTACT_EMAIL, CONTACT_PHONE, EXPOSURE_URL, SITE_NAME, SITE_URL } from "@/lib/site";
 import type { Feed } from "@/lib/types";
 
 export default async function Home() {
@@ -53,6 +55,8 @@ export default async function Home() {
 
         <QuickCheck />
         <Guidance />
+        <Faq />
+        <Contact />
       </main>
       <Footer sources={feed?.sources ?? []} />
       {feed && <JsonLd feed={feed} />}
@@ -68,6 +72,21 @@ function JsonLd({ feed }: { feed: Feed }) {
       name: SITE_NAME,
       url: SITE_URL,
       logo: `${SITE_URL}/brand/logo-white-stacked.svg`,
+      contactPoint: {
+        "@type": "ContactPoint",
+        contactType: "customer support",
+        email: CONTACT_EMAIL,
+        telephone: CONTACT_PHONE,
+      },
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: FAQ.map(({ q, a }) => ({
+        "@type": "Question",
+        name: q,
+        acceptedAnswer: { "@type": "Answer", text: a },
+      })),
     },
     {
       "@context": "https://schema.org",

@@ -175,18 +175,25 @@ svg {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  flex-wrap: wrap;
+  gap: 0 1rem;
   min-height: 64px;
 }
 
-.site-header nav {
+.site-header .container > a:first-child {
+  padding-block: 1rem;
+}
+
+/* On phones the links sit on their own row under the logo and CTA. */
+.site-nav {
+  order: 3;
+  width: 100%;
   display: flex;
-  align-items: center;
-  gap: 1.25rem;
+  gap: 1.5rem;
+  padding-bottom: 0.75rem;
 }
 
 .nav-link {
-  display: none;
   color: var(--text-muted);
   text-decoration: none;
   font-weight: 500;
@@ -532,6 +539,75 @@ svg {
   color: var(--text);
 }
 
+/* ---------- FAQ ---------- */
+.faq-list {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.faq-item {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.faq-item summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  font-weight: 700;
+  cursor: pointer;
+  list-style: none;
+}
+
+.faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-item summary::after {
+  content: "+";
+  color: var(--accent);
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.faq-item[open] summary::after {
+  content: "\2212";
+}
+
+.faq-item p {
+  padding: 0 1.25rem 1.25rem;
+  color: var(--text-muted);
+  max-width: 72ch;
+}
+
+/* ---------- Contact ---------- */
+.contact-grid {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+}
+
+.contact-item {
+  padding: 1.25rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.contact-item dt {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-bottom: 0.35rem;
+}
+
+.contact-item dd {
+  margin: 0;
+  line-height: 1.7;
+}
+
 /* ---------- Footer ---------- */
 .site-footer {
   margin-top: 2rem;
@@ -559,8 +635,15 @@ svg {
     align-items: center;
   }
 
-  .nav-link {
-    display: inline;
+  .site-nav {
+    order: 0;
+    width: auto;
+    margin-left: auto;
+    padding-bottom: 0;
+  }
+
+  .contact-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 

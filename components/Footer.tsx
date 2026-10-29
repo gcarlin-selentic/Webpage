@@ -27,6 +27,8 @@ export function Footer({ sources }: { sources: Feed["sources"] }) {
         )}
         <div className="footer-links">
           <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
+          <a href="#faq">FAQ</a>
+          <a href="#contact">Contact</a>
           <a href="#privacy">Privacy</a>
           {REPO_URL && <ExternalLink href={REPO_URL}>Source code</ExternalLink>}
           <span>© Selentic Group</span>

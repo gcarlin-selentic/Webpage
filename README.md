@@ -24,7 +24,9 @@ app/
   page.tsx               landing page + JSON-LD
   robots.ts, sitemap.ts
 components/
+  Contact.tsx            email, phone/WhatsApp, location (values in lib/site.ts)
   ExternalLink.tsx       new tab + rel="noopener noreferrer" + screen-reader hint
+  Faq.tsx                FAQ questions and answers (also emitted as FAQPage JSON-LD)
   Footer.tsx             privacy statement, data source credits, contact
   HackCard.tsx           one incident card + severity chip
   HackDetail.tsx         native <dialog> with details and source link
@@ -109,7 +111,8 @@ Nothing tracks visitors unless you opt in. To enable Plausible: create the site 
 | Typeface (DM Sans 400/500/700) | `app/fonts/` + `localFont` in `app/layout.tsx` |
 | Logos | `public/brand/*.svg` (white horizontal in header/footer, stacked for the favicon and JSON-LD) |
 | Social image | `app/opengraph-image.tsx` (TODO: replace with a designed image if the brand team has one) |
-| Contact email, repo link | `lib/site.ts` (TODOs) |
+| Contact email, phone, location, repo link | `lib/site.ts` |
+| FAQ wording | `FAQ` array in `components/Faq.tsx` |
 
 Severity colours are not in the manual. They are functional and always paired with a text label.
 
