@@ -597,32 +597,83 @@ svg {
   padding-block: 3rem;
 }
 
-.reveal-text {
-  max-width: 34ch;
-  margin-top: 1rem;
-  font-size: clamp(1.5rem, 4.5vw, 2.75rem);
-  font-weight: 500;
-  line-height: 1.2;
-  letter-spacing: -0.015em;
+.figures {
+  display: grid;
+  gap: 0.9rem;
+  margin: 1rem 0 0;
 }
 
-.reveal-line {
-  display: block;
+.figure {
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  border: 1px solid rgb(255 255 255 / 0.07);
+  border-radius: 16px;
+  background: linear-gradient(127deg, rgb(20 38 58 / 0.92) 20%, rgb(12 22 33 / 0.6) 80%);
 }
 
-@keyframes word-in {
+.figure dd {
+  margin: 0;
+}
+
+/* The number leads; dt follows it visually but stays the term for assistive tech. */
+.figure-value {
+  order: -1;
+  color: var(--accent);
+  font-size: clamp(3rem, 12vw, 5rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.figure-label {
+  margin-top: 0.75rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.figure-note {
+  margin-top: 0.2rem !important;
+  color: var(--text-muted);
+}
+
+.figures-cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem 1.5rem;
+  margin-top: 0.9rem;
+  padding: 1.5rem;
+  border-radius: 16px;
+  background: var(--brand-navy);
+}
+
+.figures-closing {
+  font-size: clamp(1.2rem, 3.5vw, 1.6rem);
+  font-weight: 700;
+}
+
+.figures-sub {
+  margin-top: 0.25rem;
+  color: #e6edf5; /* 5.9:1 on brand navy */
+}
+
+@keyframes fade-up {
   from {
-    opacity: 0.25;
+    opacity: 0;
+    translate: 0 1.5rem;
   }
   to {
     opacity: 1;
+    translate: 0 0;
   }
 }
 
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
-    .reveal-word {
-      animation: word-in linear both;
+    .reveal-in {
+      animation: fade-up linear both;
       animation-timeline: view();
       animation-range: entry 0% entry 100%;
     }
@@ -1110,6 +1161,20 @@ svg {
 
   .reveal {
     padding-block: 5rem;
+  }
+
+  .figures {
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .figure {
+    padding: 2rem;
+  }
+
+  .figures-cta {
+    margin-top: 1rem;
+    padding: 1.75rem 2rem;
   }
 
   .hack-list {

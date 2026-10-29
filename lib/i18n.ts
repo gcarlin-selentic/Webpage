@@ -50,12 +50,11 @@ const en = {
   },
   reveal: {
     eyebrow: "In numbers",
-    lines: (claims: string, breaches: string, days: number) => [
-      `${claims} ransomware claims in the last seven days.`,
-      `${breaches} verified data breaches in the last ${days} days.`,
-      "Your data could be in any of them.",
-      "Checking takes under a minute.",
-    ],
+    claims: "Ransomware claims",
+    breaches: "Verified data breaches",
+    inDays: (days: number) => `in the last ${days} days`,
+    closing: "Your data could be in any of them.",
+    closingSub: "Checking takes under a minute.",
   },
   incidents: { title: "Latest incidents", note: "Newest first. Updated daily.", listName: "Latest security incidents" },
   severity: { critical: "Critical", high: "High", medium: "Medium", low: "Low" } satisfies Record<Severity, string>,
@@ -214,12 +213,11 @@ const es: Dict = {
   },
   reveal: {
     eyebrow: "En cifras",
-    lines: (claims, breaches, days) => [
-      `${claims} reclamos de ransomware en los últimos siete días.`,
-      `${breaches} filtraciones de datos verificadas en los últimos ${days} días.`,
-      "Sus datos podrían estar en cualquiera de ellos.",
-      "Verificarlo toma menos de un minuto.",
-    ],
+    claims: "Reclamos de ransomware",
+    breaches: "Filtraciones de datos verificadas",
+    inDays: (days) => `en los últimos ${days} días`,
+    closing: "Sus datos podrían estar en cualquiera de ellos.",
+    closingSub: "Verificarlo toma menos de un minuto.",
   },
   incidents: {
     title: "Últimos incidentes",
