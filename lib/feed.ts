@@ -1,5 +1,6 @@
 import { cacheLife } from "next/cache";
 import mock from "@/data/mock-hacks.json";
+import { matchesQuery, normalizeQuery } from "./search";
 import { SEVERITIES, type Feed, type FeedResult, type FeedStats, type Hack, type Severity } from "./types";
 
 /**
@@ -20,19 +21,41 @@ const MAX_SEVERE = 20;
 
 export const FEED_URL = process.env.HACKS_API_URL || DEFAULT_FEED_URL;
 
-export async function getFeed(): Promise<FeedResult> {
+/** Most search results a single request returns. */
+const MAX_SEARCH = 50;
+
+type Loaded = { ok: true; feed: Feed; all: Hack[] } | { ok: false; error: string };
+
+/** One cached fetch feeds both the page (trimmed list) and search (every incident). */
+async function loadFeed(): Promise<Loaded> {
   "use cache";
   try {
     const raw = FEED_URL === "mock" ? mock : await fetchUpstream(FEED_URL);
-    const feed = normalizeFeed(raw);
+    const { feed, all } = normalizeFeed(raw);
     cacheLife("hours");
-    return { ok: true, feed };
+    return { ok: true, feed, all };
   } catch (err) {
     // Keep failures short-lived so the next visitor triggers a retry.
     cacheLife("minutes");
     console.error("[feed] failed to load", err);
     return { ok: false, error: "upstream_unavailable" };
   }
+}
+
+export async function getFeed(): Promise<FeedResult> {
+  const result = await loadFeed();
+  return result.ok ? { ok: true, feed: result.feed } : result;
+}
+
+/** Searches every incident in the upstream feed, not just the ones the page lists. */
+export async function searchHacks(
+  query: string,
+): Promise<{ ok: true; hacks: Hack[]; total: number } | { ok: false; error: string }> {
+  const result = await loadFeed();
+  if (!result.ok) return result;
+  const q = normalizeQuery(query);
+  const matches = q ? result.all.filter((h) => matchesQuery(h, q)) : [];
+  return { ok: true, hacks: matches.slice(0, MAX_SEARCH), total: matches.length };
 }
 
 async function fetchUpstream(url: string): Promise<unknown> {
@@ -52,7 +75,7 @@ type Obj = Record<string, unknown>;
 const isObj = (v: unknown): v is Obj => typeof v === "object" && v !== null && !Array.isArray(v);
 const str = (v: unknown) => (typeof v === "string" ? v.trim() : "");
 
-export function normalizeFeed(raw: unknown): Feed {
+export function normalizeFeed(raw: unknown): { feed: Feed; all: Hack[] } {
   const root = isObj(raw) ? raw : {};
   const list = Array.isArray(raw) ? raw : Array.isArray(root.items) ? root.items : Array.isArray(root.hacks) ? root.hacks : null;
   if (!list) throw new Error("feed has no items array");
@@ -75,12 +98,13 @@ export function normalizeFeed(raw: unknown): Feed {
     : [];
 
   const updated = str(root.generated) || str(root.updated) || new Date().toISOString();
-  return {
+  const feed: Feed = {
     hacks,
     updated,
     sources: sources.filter((s) => s.name && s.url),
     stats: radarStats(list.filter(isObj).filter((item) => "victim" in item), updated, Number(root.window_days)),
   };
+  return { feed, all };
 }
 
 const DAY_MS = 86_400_000;

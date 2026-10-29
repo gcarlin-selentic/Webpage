@@ -1,14 +1,20 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { SEVERITIES, type Feed, type Hack, type Severity } from "@/lib/types";
 import { EXPOSURE_URL } from "@/lib/site";
-import { DICT, localized, type Locale } from "@/lib/i18n";
+import { DICT, type Locale } from "@/lib/i18n";
+import { matchesQuery, normalizeQuery } from "@/lib/search";
 import { ExternalLink } from "./ExternalLink";
 import { HackCard } from "./HackCard";
 import { HackDetail } from "./HackDetail";
 
 const PAGE = 10;
+/** Pause after typing before searching the whole feed on the server. */
+const SEARCH_DELAY_MS = 250;
+
+/** Server results for one query; `failed` means fall back to the incidents already on the page. */
+type Remote = { q: string; hacks: Hack[]; total: number; failed?: boolean };
 
 export function HackFeed({ initial, locale }: { initial: Feed | null; locale: Locale }) {
   const t = DICT[locale].feed;
@@ -18,21 +24,46 @@ export function HackFeed({ initial, locale }: { initial: Feed | null; locale: Lo
   const [query, setQuery] = useState("");
   const [visible, setVisible] = useState(PAGE);
   const [open, setOpen] = useState<Hack | null>(null);
+  const [remote, setRemote] = useState<Remote | null>(null);
 
   const hacks = useMemo(() => feed?.hacks ?? [], [feed]);
   const present = SEVERITIES.filter((s) => hacks.some((h) => h.severity === s));
+  const q = normalizeQuery(query);
 
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase().replace(/^@/, "");
-    return hacks.filter(
-      (h) =>
-        (severity === "all" || h.severity === severity) &&
-        (!q ||
-          h.title.toLowerCase().includes(q) ||
-          h.affected_domains.some((d) => d.toLowerCase().includes(q)) ||
-          [...h.tags, ...localized(h, locale).tags].some((tag) => tag.toLowerCase().includes(q))),
-    );
-  }, [hacks, severity, query, locale]);
+  // The page only carries the newest incidents. While the visitor types, results
+  // come from that list at once; after a short pause the server searches the
+  // whole upstream feed and its results take over.
+  useEffect(() => {
+    if (q.length < 2) return;
+    const controller = new AbortController();
+    const timer = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/hacks?q=${encodeURIComponent(query.trim())}`, { signal: controller.signal });
+        if (!res.ok) throw new Error(String(res.status));
+        const data = (await res.json()) as { hacks: Hack[]; total: number };
+        setRemote({ q, hacks: data.hacks, total: data.total });
+      } catch {
+        // A newer keystroke aborted this request: nothing to do.
+        if (controller.signal.aborted) return;
+        setRemote({ q, hacks: [], total: 0, failed: true });
+      }
+    }, SEARCH_DELAY_MS);
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
+  }, [q, query]);
+
+  const searched = remote && remote.q === q ? remote : null;
+  const searching = q.length >= 2 && !searched;
+
+  const filtered = useMemo(
+    () =>
+      (searched && !searched.failed ? searched.hacks : hacks).filter(
+        (h) => (severity === "all" || h.severity === severity) && matchesQuery(h, q),
+      ),
+    [searched, hacks, severity, q],
+  );
 
   const shown = filtered.slice(0, visible);
 
@@ -113,7 +144,15 @@ export function HackFeed({ initial, locale }: { initial: Feed | null; locale: Lo
         {t.showing(shown.length, filtered.length)}
       </p>
 
-      {filtered.length === 0 ? (
+      {searched && searched.total > searched.hacks.length && (
+        <p className="section-note">{t.searchLimited(searched.hacks.length, searched.total)}</p>
+      )}
+
+      {filtered.length === 0 && searching ? (
+        <p className="empty" role="status">
+          {t.searching}
+        </p>
+      ) : filtered.length === 0 ? (
         <div className="empty">
           {t.noMatch}{" "}
           <button

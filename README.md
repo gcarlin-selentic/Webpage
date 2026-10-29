@@ -15,7 +15,7 @@ English at `/`, Spanish at `/es`. Next.js 16 (App Router, Cache Components), Typ
 
 ```
 app/
-  api/hacks/route.ts     normalised feed as JSON (used by the "Try again" button)
+  api/hacks/route.ts     normalised feed as JSON ("Try again" button); ?q= searches the whole upstream feed
   fonts/                 DM Sans (brand typeface) subset to Latin WOFF2; Bold TTF for the OG image
   (en)/                  English root layout, page and social image (served at /)
   (es)/es/               Spanish page and social image (served at /es); (es)/layout.tsx sets lang="es"
@@ -42,6 +42,7 @@ lib/
   i18n.ts                ALL page text in English and Spanish (one dictionary per language)
   og.tsx                 social image renderer shared by both languages
   feed.ts                fetch, cache (1 h), normalise radar.json or the Hack shape
+  search.ts              search rule shared by the page and the API (accent-insensitive, domain -> name)
   site.ts                URLs, contact, labels (TODOs here)
   types.ts               Hack / Feed types
 public/brand/            logos from the brand manual (SVG)

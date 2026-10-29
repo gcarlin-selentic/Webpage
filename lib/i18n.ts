@@ -63,6 +63,9 @@ const en = {
     searchLabel: "Search incidents by company, domain or tag",
     searchPlaceholder: "Search company or domain",
     showing: (shown: number, total: number) => `Showing ${shown} of ${total} incidents`,
+    searchLimited: (shown: number, total: number) =>
+      `Showing the ${shown} most recent of ${total} matches. Add more detail to narrow it down.`,
+    searching: "Searching all incidents…",
     noMatch: "No incidents match these filters.",
     clear: "Clear filters",
     showMore: (n: number) => `Show ${n} more`,
@@ -221,6 +224,9 @@ const es: Dict = {
     searchLabel: "Buscar incidentes por empresa, dominio o etiqueta",
     searchPlaceholder: "Buscar empresa o dominio",
     showing: (shown, total) => `Mostrando ${shown} de ${total} incidentes`,
+    searchLimited: (shown, total) =>
+      `Mostrando los ${shown} más recientes de ${total} resultados. Agregue más detalle para acotar la búsqueda.`,
+    searching: "Buscando en todos los incidentes…",
     noMatch: "Ningún incidente coincide con estos filtros.",
     clear: "Borrar filtros",
     showMore: (n) => `Mostrar ${n} más`,
