@@ -228,41 +228,46 @@ svg {
   color: var(--accent);
 }
 
-/* ---------- Radar panel (hero visual) ---------- */
-.radar-wrap {
+/* ---------- Threat radar dashboard (hero visual) ---------- */
+/* Glass cards on a deep navy field with a blue glow, in Selentic colors. */
+.dash {
   position: relative;
+  isolation: isolate;
+  display: grid;
+  gap: 0.9rem;
   margin-top: 2.5rem;
+  padding: 1rem;
+  border: 1px solid rgb(255 255 255 / 0.08);
+  border-radius: 20px;
+  background: linear-gradient(160deg, #0f2238 0%, #0b1622 55%, #0a1118 100%);
+  box-shadow: 0 40px 100px -40px rgb(54 122 188 / 0.55);
 }
 
-/* Soft brand glow behind the panel. */
-.radar-wrap::before {
+.dash::before {
   content: "";
   position: absolute;
-  inset: -10% -5% 10%;
-  background: radial-gradient(60% 60% at 30% 40%, rgb(48 95 148 / 0.45), transparent 70%),
-    radial-gradient(40% 50% at 80% 70%, rgb(5 181 222 / 0.18), transparent 70%);
-  filter: blur(40px);
+  inset: 0;
   z-index: -1;
+  border-radius: inherit;
+  background: radial-gradient(50% 60% at 15% 0%, rgb(54 122 188 / 0.35), transparent 70%),
+    radial-gradient(40% 50% at 100% 100%, rgb(5 181 222 / 0.15), transparent 70%);
   pointer-events: none;
 }
 
-.radar {
-  margin: 0;
-  padding: 1rem;
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  background: linear-gradient(180deg, #172129, var(--surface));
-  box-shadow: 0 30px 80px -30px rgb(5 181 222 / 0.25);
-}
-
-.radar-head {
+.dash-head {
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  padding-bottom: 0.85rem;
-  border-bottom: 1px solid var(--line);
-  font-size: 0.9rem;
-  font-weight: 700;
+}
+
+.dash-head h2 {
+  font-size: 1rem;
+}
+
+.dash-updated {
+  margin-left: auto;
+  color: var(--text-muted);
+  font-size: 0.85rem;
 }
 
 .radar-dot {
@@ -273,112 +278,178 @@ svg {
   box-shadow: 0 0 0 4px rgb(5 181 222 / 0.2);
 }
 
-.radar-updated {
-  margin-left: auto;
-  color: var(--text-muted);
-  font-weight: 500;
+.dash-card,
+.kpi {
+  border: 1px solid rgb(255 255 255 / 0.07);
+  border-radius: 16px;
+  background: linear-gradient(127deg, rgb(20 38 58 / 0.92) 20%, rgb(12 22 33 / 0.6) 80%);
+  backdrop-filter: blur(12px);
 }
 
-.radar-body {
+.dash-kpis {
   display: grid;
-  gap: 1rem;
-  margin-top: 1rem;
-}
-
-.radar-tiles {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.6rem;
   margin: 0;
 }
 
-.radar-tile {
-  padding: 0.8rem;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--bg);
+.kpi {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+  min-width: 0;
+  padding: 0.85rem;
 }
 
-.radar-tile dt {
+.kpi > div {
+  min-width: 0;
+}
+
+.kpi dt {
   color: var(--text-muted);
   font-size: 0.75rem;
-  line-height: 1.3;
+  font-weight: 500;
 }
 
-.radar-tile dd {
-  margin: 0.4rem 0 0;
-  font-size: clamp(1.35rem, 5vw, 2rem);
+.kpi dd {
+  margin: 0;
+}
+
+.kpi-value {
+  margin-top: 0.3rem !important;
+  font-size: clamp(1.4rem, 5vw, 1.9rem);
   font-weight: 700;
-  line-height: 1;
+  line-height: 1.1;
 }
 
-.radar-tile-hero {
-  border-color: transparent;
-  background: var(--brand-navy);
+/* A group name instead of a number: smaller, and allowed to wrap. */
+.kpi-text {
+  font-size: 1.05rem;
+  overflow-wrap: anywhere;
+  text-transform: capitalize;
 }
 
-.radar-tile-hero dt {
-  color: #e6edf5; /* 5.9:1 on brand navy */
-}
-
-.radar-chart-title {
-  margin-bottom: 0.5rem;
+.kpi-note {
+  margin-top: 0.2rem !important;
   color: var(--text-muted);
-  font-size: 0.85rem;
+  font-size: 0.75rem;
 }
 
-.bars {
+.kpi-icon {
+  display: none;
+  flex: none;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--brand-blue);
+  color: #fff;
+  box-shadow: 0 8px 20px -6px rgb(54 122 188 / 0.8);
+}
+
+.dash-grid {
   display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 2px;
-  height: 150px;
+  gap: 0.9rem;
 }
 
-.bar-col {
+.dash-card {
+  display: grid;
+  align-content: start;
+  gap: 0.75rem;
+  min-width: 0;
+  padding: 1rem;
+}
+
+.dash-card-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.25rem 0.75rem;
+}
+
+.dash-card-head h3 {
+  font-size: 0.95rem;
+}
+
+.dash-card-head span,
+.dash-note {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+/* Area chart */
+.area-plot {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  height: 100%;
+  height: 160px;
 }
 
-.bar-area {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-end;
+.area-svg {
+  position: absolute;
+  inset: 0;
   width: 100%;
-  border-bottom: 1px solid var(--line);
+  height: 100%;
+  overflow: visible;
 }
 
-.bar {
-  width: min(24px, 70%);
-  border-radius: 4px 4px 0 0;
-  background: var(--accent);
+.area-grid {
+  stroke: rgb(255 255 255 / 0.07);
+  stroke-width: 1;
 }
 
-/* Today is still in progress: lighter so it doesn't read as a drop. */
-.bar-partial {
-  opacity: 0.45;
+.area-line {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
 }
 
-.bar-value {
-  margin-bottom: 0.3rem;
+.area-cols {
+  position: absolute;
+  inset: 0 -3.5% 0;
+  display: grid;
+  grid-template-columns: repeat(14, minmax(0, 1fr));
+}
+
+.area-col {
+  position: relative;
+}
+
+.area-dot {
+  position: absolute;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  border: 2px solid var(--accent);
+  border-radius: 50%;
+  background: #0b1622;
+  translate: -50% 50%;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.area-peak {
+  position: absolute;
+  left: 50%;
+  translate: -50% -0.6rem;
   font-size: 0.75rem;
   font-weight: 700;
 }
 
-.bar-label {
-  margin-top: 0.4rem;
-  color: var(--text-muted);
-  font-size: 0.75rem;
+/* Crosshair and tooltip on hover. */
+.area-col::before {
+  content: "";
+  position: absolute;
+  inset: 0 50% 0 auto;
+  width: 1px;
+  background: rgb(255 255 255 / 0.18);
+  opacity: 0;
 }
 
-.bar-col::after {
+.area-col::after {
   content: attr(data-tip);
   position: absolute;
-  bottom: calc(100% - 0.5rem);
+  bottom: calc(100% + 0.25rem);
   left: 50%;
   translate: -50% 0;
   width: max-content;
@@ -387,41 +458,126 @@ svg {
   border: 1px solid var(--line);
   border-radius: 6px;
   background: var(--bg);
-  color: var(--text);
   font-size: 0.8rem;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.15s;
-  z-index: 1;
+  z-index: 2;
 }
 
-.bar-col:hover::after {
+.area-col:first-child::after {
+  left: 0;
+  translate: 0 0;
+}
+
+.area-col:last-child::after {
+  left: auto;
+  right: 0;
+  translate: 0 0;
+}
+
+.area-col:hover::before,
+.area-col:hover::after,
+.area-col:hover .area-dot {
   opacity: 1;
 }
 
-.bar-col:hover .bar {
-  filter: brightness(1.15);
-}
-
-.radar-float {
+.area-axis {
   display: grid;
-  gap: 0.5rem;
-  margin-top: 0.75rem;
-  padding: 1rem;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  background: #1b262d;
-  box-shadow: 0 24px 60px -12px rgb(0 0 0 / 0.7);
+  grid-template-columns: repeat(14, minmax(0, 1fr));
+  margin: 0.4rem -3.5% 0;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  text-align: center;
+  white-space: nowrap;
 }
 
-.radar-float-label {
+/* Sectors */
+.sector-list {
+  display: grid;
+  gap: 0.65rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sector-list li {
+  display: grid;
+  grid-template-columns: 7.5rem minmax(0, 1fr) 2.5rem;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+}
+
+.sector-track {
+  height: 8px;
+  border-radius: 4px;
+  background: rgb(255 255 255 / 0.06);
+}
+
+.sector-bar {
+  display: block;
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--brand-blue), var(--accent));
+}
+
+.sector-count {
+  font-weight: 700;
+  text-align: right;
+}
+
+/* Gauge */
+.gauge {
+  position: relative;
+  width: min(170px, 60%);
+  margin: 0.25rem auto;
+}
+
+.gauge-svg {
+  display: block;
+  width: 100%;
+}
+
+.gauge-track,
+.gauge-fill {
+  fill: none;
+  stroke-width: 10;
+}
+
+.gauge-track {
+  stroke: rgb(255 255 255 / 0.08);
+}
+
+.gauge-fill {
+  stroke: var(--accent);
+  stroke-linecap: round;
+}
+
+.gauge-center {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  text-align: center;
+}
+
+.gauge-pct {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.gauge-of {
+  margin-top: 0.25rem;
   color: var(--text-muted);
   font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
 }
 
+.dash-gauge .dash-note {
+  text-align: center;
+}
+
+/* Latest breach */
 .radar-float-meta {
   display: flex;
   align-items: center;
@@ -430,14 +586,9 @@ svg {
   font-size: 0.85rem;
 }
 
-.radar-float-title {
-  font-size: 1.1rem;
+.dash-breach-title {
+  font-size: 1.25rem;
   font-weight: 700;
-}
-
-.radar-float-tags {
-  color: var(--text-muted);
-  font-size: 0.85rem;
 }
 
 /* ---------- Scroll reveal ---------- */
@@ -907,44 +1058,41 @@ svg {
     padding-block: 4rem 3rem;
   }
 
-  .radar-wrap {
+  .dash {
     margin-top: 3.5rem;
-    margin-bottom: 3.5rem;
+    padding: 1.5rem;
+    gap: 1.25rem;
   }
 
-  /* Extra bottom padding is the strip the floating card overlaps, so it never covers the chart. */
-  .radar {
-    padding: 1.25rem 1.5rem 6.5rem;
+  .dash-kpis {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1rem;
   }
 
-  .radar-body {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
-    gap: 1.5rem;
-    align-items: end;
+  .kpi {
+    padding: 1rem 1.1rem;
   }
 
-  .radar-tiles {
-    grid-template-columns: 1fr 1fr;
+  .kpi-icon {
+    display: grid;
   }
 
-  .radar-tile-hero {
-    grid-column: 1 / -1;
+  .dash-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
   }
 
-  .radar-tile-hero dd {
-    font-size: 3.5rem;
+  .dash-area,
+  .dash-sectors {
+    grid-column: span 2;
   }
 
-  .bars {
-    height: 190px;
+  .dash-card {
+    padding: 1.25rem;
   }
 
-  .radar-float {
-    position: absolute;
-    left: 1.5rem;
-    bottom: -4.5rem;
-    width: min(300px, 32%);
-    margin: 0;
+  .area-plot {
+    height: 210px;
   }
 
   .reveal {

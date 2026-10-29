@@ -108,18 +108,29 @@ export function normalizeFeed(raw: unknown): { feed: Feed; all: Hack[] } {
 }
 
 const DAY_MS = 86_400_000;
+/** Days in the hero area chart. Ransomware claims stay in the feed for about 18 days. */
+const CHART_DAYS = 14;
+/** Days behind the hero's stat cards, sectors and region gauge. */
+const WEEK = 7;
+// ISO codes for Latin America and the Caribbean's Spanish- and Portuguese-speaking countries.
+const LATAM = new Set("AR BO BR CL CO CR CU DO EC GT HN MX NI PA PE PR PY SV UY VE".split(" "));
 
-/** Seven-day totals for the hero panel, from every radar item rather than the trimmed list. */
+/** Totals for the hero dashboard, from every radar item rather than the trimmed list. */
 function radarStats(items: Obj[], updated: string, windowDays: number): FeedStats | undefined {
   const end = toIso(updated);
   if (!items.length || !end) return undefined;
   const last = Date.parse(end.slice(0, 10));
-  const daily = Array.from({ length: 7 }, (_, i) => ({
-    day: new Date(last - (6 - i) * DAY_MS).toISOString().slice(0, 10),
+  const daily = Array.from({ length: CHART_DAYS }, (_, i) => ({
+    day: new Date(last - (CHART_DAYS - 1 - i) * DAY_MS).toISOString().slice(0, 10),
     claims: 0,
   }));
   const byDay = new Map(daily.map((d) => [d.day, d]));
+  const weekStart = daily[CHART_DAYS - WEEK].day;
   const countries = new Set<string>();
+  const sectors = new Map<string, number>();
+  const groups = new Map<string, number>();
+  let claims = 0;
+  let latam = 0;
   // The upstream already limits the feed to its window, so every breach in it counts.
   const days = Number.isFinite(windowDays) && windowDays > 0 ? windowDays : 180;
   let breaches = 0;
@@ -132,13 +143,27 @@ function radarStats(items: Obj[], updated: string, windowDays: number): FeedStat
     const bucket = byDay.get(day);
     if (!bucket) continue;
     bucket.claims++;
-    if (str(item.country)) countries.add(str(item.country).toUpperCase());
+    if (day < weekStart) continue;
+    claims++;
+    const country = str(item.country).toUpperCase();
+    if (country) countries.add(country);
+    if (LATAM.has(country)) latam++;
+    const sector = str(item.sector);
+    if (SECTORS[sector]) sectors.set(sector, (sectors.get(sector) ?? 0) + 1);
+    const group = str(item.group);
+    if (group) groups.set(group, (groups.get(group) ?? 0) + 1);
   }
+  const top = (m: Map<string, number>, n: number) =>
+    [...m].sort((a, b) => b[1] - a[1]).slice(0, n).map(([key, count]) => ({ key, count }));
+  const topGroup = top(groups, 1)[0];
   return {
     daily,
-    claims: daily.reduce((n, d) => n + d.claims, 0),
+    claims,
     countries: countries.size,
     breaches: { count: breaches, days },
+    sectors: top(sectors, 5).map(({ key, count }) => ({ ...SECTORS[key], count })),
+    topGroup: topGroup ? { name: topGroup.key, count: topGroup.count } : undefined,
+    latam: { count: latam, total: claims },
   };
 }
 

@@ -33,12 +33,18 @@ export interface Feed {
 }
 
 export interface FeedStats {
-  /** Last seven days, oldest first, as YYYY-MM-DD (UTC). The last day may still be in progress. */
+  /** Ransomware claims per day over the last 14 days, oldest first, YYYY-MM-DD (UTC). The last day may still be in progress. */
   daily: { day: string; claims: number }[];
-  /** Ransomware claims over those seven days. */
+  /** Ransomware claims over the last seven days. Every figure below is over those seven days unless it says otherwise. */
   claims: number;
   /** Countries named in those claims. */
   countries: number;
+  /** Most targeted sectors, largest first, with names in both languages. */
+  sectors: { en: string; es: string; count: number }[];
+  /** The group behind the most claims. */
+  topGroup?: { name: string; count: number };
+  /** Claims against organisations in Latin America, out of all claims. */
+  latam: { count: number; total: number };
   /** Verified breaches over the feed's whole window, which is much longer than a week. */
   breaches: { count: number; days: number };
 }

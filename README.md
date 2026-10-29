@@ -33,7 +33,7 @@ components/
   HomePage.tsx           the landing page + JSON-LD, rendered once per language
   RootDocument.tsx       <html>, fonts, per-language metadata with hreflang, opt-in analytics
   Header.tsx
-  RadarPanel.tsx         hero dashboard: 7-day stat tiles, claims-per-day chart, latest breach
+  RadarPanel.tsx         hero dashboard: stat cards, 14-day area chart, sectors, Latin America gauge, latest breach
   Reveal.tsx             scroll-driven "in numbers" statement (CSS only, off for reduced motion)
   QuickCheck.tsx         "check in under a minute" panel + guidance list
   RelativeDate.tsx       absolute date in HTML, relative after hydration
