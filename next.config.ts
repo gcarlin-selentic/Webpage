@@ -23,6 +23,17 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
   poweredByHeader: false,
+  // Pages from the previous sites that Google still has indexed. Spanish pages
+  // go to /es, English ones to the home page; permanent, so search engines
+  // transfer them.
+  async redirects() {
+    return [
+      ...["/servicios", "/politica-de-privacidad", "/index.html", "/contacto.html", "/quienes-somos.html", "/partners.html"].map(
+        (source) => ({ source, destination: "/es", permanent: true }),
+      ),
+      ...["/contact", "/about"].map((source) => ({ source, destination: "/", permanent: true })),
+    ];
+  },
   async headers() {
     return [
       {
