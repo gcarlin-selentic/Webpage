@@ -23,6 +23,7 @@ const en = {
   switchTo: { label: "ES", title: "Ver en español" },
   checkShort: "Check exposure",
   checkLong: "Check if you're exposed",
+  expert: { label: "Talk to an expert", subject: "Talk to an expert" },
   hero: {
     titleAccent: "Breaches happen every day.",
     titleRest: "Know if you're in one.",
@@ -186,6 +187,7 @@ const es: Dict = {
   // Short enough to sit next to the logo on a 375 px phone.
   checkShort: "Revisar correo",
   checkLong: "Verifique si está expuesto",
+  expert: { label: "Hable con un experto", subject: "Hablar con un experto" },
   hero: {
     titleAccent: "Las filtraciones ocurren a diario.",
     titleRest: "Sepa si está en una.",

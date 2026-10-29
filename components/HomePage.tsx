@@ -10,7 +10,7 @@ import { RelativeDate } from "@/components/RelativeDate";
 import { Reveal } from "@/components/Reveal";
 import { getFeed } from "@/lib/feed";
 import { DICT, HOME, localized, type Locale } from "@/lib/i18n";
-import { CONTACT_EMAIL, CONTACT_PHONE, EXPOSURE_URL, SITE_NAME, SITE_URL } from "@/lib/site";
+import { CONTACT_EMAIL, CONTACT_PHONE, EXPERT_EMAIL, EXPOSURE_URL, SITE_NAME, SITE_URL } from "@/lib/site";
 import type { Feed } from "@/lib/types";
 
 /** The whole landing page, rendered once per language by app/(en)/page.tsx and app/(es)/es/page.tsx. */
@@ -47,6 +47,14 @@ export async function HomePage({ locale }: { locale: Locale }) {
               </p>
             )}
             {feed?.stats && <RadarPanel feed={feed} locale={locale} />}
+            <div className="expert-cta">
+              <a
+                className="btn btn-expert"
+                href={`mailto:${EXPERT_EMAIL}?subject=${encodeURIComponent(t.expert.subject)}`}
+              >
+                {t.expert.label}
+              </a>
+            </div>
           </div>
         </section>
 

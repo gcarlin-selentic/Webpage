@@ -592,6 +592,27 @@ svg {
   font-weight: 700;
 }
 
+/* ---------- Talk to an expert ---------- */
+.expert-cta {
+  display: flex;
+  justify-content: center;
+  margin-top: 2.5rem;
+}
+
+.btn-expert {
+  padding: 0.9rem 1.75rem;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  background: rgb(5 181 222 / 0.1);
+  color: var(--text);
+  font-size: 1.05rem;
+  box-shadow: 0 10px 40px -12px rgb(5 181 222 / 0.6);
+}
+
+.btn-expert:hover {
+  background: rgb(5 181 222 / 0.2);
+}
+
 /* ---------- Scroll reveal ---------- */
 .reveal {
   padding-block: 3rem;
