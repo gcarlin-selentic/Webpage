@@ -18,16 +18,17 @@
   --surface-2: var(--brand-charcoal);
   --line: #2c3a42;
   --text: var(--brand-white);
-  --text-muted: #a9b4bc; /* 9.6:1 on --bg, 6.1:1 on --surface-2 */
+  --text-muted: #d3dbe1; /* near-white secondary text, 14:1 on --bg */
   --accent: var(--brand-cyan);
   --accent-ink: var(--brand-ink);
 
   /* Severity. Not part of the brand manual: functional colours, each always
      paired with a text label so meaning never relies on colour alone. */
-  --sev-critical: #ff6b6b;
-  --sev-high: #ffa94d;
+  /* Traffic-light severity: red, yellow, green. Critical is a deeper red than high. */
+  --sev-critical: #ff3b3b;
+  --sev-high: #ff5c5c;
   --sev-medium: #ffd43b;
-  --sev-low: #8ce99a;
+  --sev-low: #40c057;
 
   --font-sans: var(--font-dm-sans), "Helvetica Neue", Arial, sans-serif;
   --radius: 10px;
@@ -611,7 +612,7 @@ svg {
 
 @keyframes word-in {
   from {
-    opacity: 0.18;
+    opacity: 0.25;
   }
   to {
     opacity: 1;
@@ -623,7 +624,7 @@ svg {
     .reveal-word {
       animation: word-in linear both;
       animation-timeline: view();
-      animation-range: entry 90% cover 45%;
+      animation-range: entry 0% entry 100%;
     }
   }
 }
@@ -744,12 +745,16 @@ svg {
   margin: 0;
   padding: 0;
   display: grid;
+  grid-auto-rows: 1fr;
   gap: 0.75rem;
 }
 
+/* Every card is the same size: rows match the tallest card and the button sits at the bottom. */
 .hack-card {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 0.5rem;
+  height: 100%;
   padding: 1rem;
   border: 1px solid var(--line);
   border-radius: var(--radius);
@@ -768,10 +773,14 @@ svg {
 .hack-card h3 {
   font-size: 1.05rem;
   overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .hack-card p {
-  color: var(--text-muted);
+  color: var(--text);
   font-size: 0.95rem;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -780,32 +789,36 @@ svg {
 }
 
 .hack-card .btn {
-  justify-self: start;
+  align-self: flex-start;
+  margin-top: auto;
 }
 
+/* The label stays white for legibility; the dot, border and tint carry the color. */
 .sev {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  padding: 0.15rem 0.6rem;
-  border: 1px solid currentColor;
+  padding: 0.15rem 0.65rem;
+  border: 1px solid var(--sev);
   border-radius: 999px;
+  background: color-mix(in srgb, var(--sev) 22%, transparent);
+  color: var(--text);
   font-size: 0.8rem;
   font-weight: 700;
 }
 
 .sev::before {
   content: "";
-  width: 0.5rem;
-  height: 0.5rem;
+  width: 0.55rem;
+  height: 0.55rem;
   border-radius: 50%;
-  background: currentColor;
+  background: var(--sev);
 }
 
-.sev-critical { color: var(--sev-critical); }
-.sev-high { color: var(--sev-high); }
-.sev-medium { color: var(--sev-medium); }
-.sev-low { color: var(--sev-low); }
+.sev-critical { --sev: var(--sev-critical); }
+.sev-high { --sev: var(--sev-high); }
+.sev-medium { --sev: var(--sev-medium); }
+.sev-low { --sev: var(--sev-low); }
 
 .domains {
   font-size: 0.85rem;
